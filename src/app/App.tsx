@@ -1,17 +1,15 @@
-import { NavLink, Outlet } from "react-router";
+import { Route, Routes } from 'react-router';
+import { AppLayout } from '../shared/ui';
+import { HomePage } from '../pages/home';
+import { ResultPage } from '../pages/result';
 
-export function App () {
+export function App() {
   return (
-    <>
-      <header>
-        <nav>
-          <NavLink to="/">Главная</NavLink>
-          <NavLink to="/result">Результат</NavLink>
-        </nav>
-      </header>
-      <main>
-          <Outlet />
-      </main>
-    </>
+    <Routes>
+      <Route path="/" element={<AppLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="result" element={<ResultPage />} />
+      </Route>
+    </Routes>
   );
 }
