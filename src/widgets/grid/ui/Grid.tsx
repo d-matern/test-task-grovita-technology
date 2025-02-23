@@ -97,13 +97,21 @@ export function Grid() {
     <div className="relative">
       {/* Контролы зума */}
       <div className="mb-2.5 flex flex-row justify-end gap-3">
-        <button className='cursor-pointer transition-colors hover:text-blue-400' onClick={handleZoomIn} disabled={scale >= 3.5}>
+        <button
+          className="cursor-pointer transition-colors hover:text-blue-400"
+          onClick={handleZoomIn}
+          disabled={scale >= 3.5}
+        >
           <IconMagnifyPlusOutline />
         </button>
 
         {scale.toFixed(1)}
 
-        <button className='cursor-pointer transition-colors hover:text-blue-400' onClick={handleZoomOut} disabled={scale <= 1}>
+        <button
+          className="cursor-pointer transition-colors hover:text-blue-400"
+          onClick={handleZoomOut}
+          disabled={scale <= 1}
+        >
           <IconMagnifyMinusOutline />
         </button>
       </div>
