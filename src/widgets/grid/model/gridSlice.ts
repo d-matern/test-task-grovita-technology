@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Cell } from './cell.type';
+import { Cell } from './types/cell.type';
+import { CELL_COLOR_DEFAULT, CELL_SIZE, COLS, ROWS } from '../config/constants';
 
 interface GridState {
   cells: Cell[];
@@ -8,16 +9,12 @@ interface GridState {
   isSelecting: boolean;
 }
 
-const ROWS = 10;
-const COLS = 15;
-const CELL_SIZE = 40;
-
 const initialState: GridState = {
   cells: Array.from({ length: ROWS * COLS }, (_, index) => ({
     id: index.toString(),
     x: (index % COLS) * CELL_SIZE,
     y: Math.floor(index / COLS) * CELL_SIZE,
-    color: '#ffffff',
+    color: CELL_COLOR_DEFAULT,
     selected: false,
   })),
   selectedColor: '#ff0000',
@@ -30,6 +27,13 @@ const gridSlice = createSlice({
   initialState,
   reducers: {
     selectCell: (state, action: PayloadAction<string>) => {
+      const cellIndex = state.selectedCells.findIndex(c => c === action.payload);
+
+      if (cellIndex >= 0) {
+        state.selectedCells = state.selectedCells.splice(cellIndex, 1);
+        return;
+      }
+
       state.selectedCells.push(action.payload);
     },
     clearSelection: (state) => {
