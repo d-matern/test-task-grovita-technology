@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks/reduxHooks';
 import { selectCell, setSelectedCells, setSelecting } from '../model/gridSlice';
 import { RootState } from '../../../shared/types/store';
 import { CELL_SIZE, COLS, ROWS } from '../config/constants';
 
+const widthDefault = COLS * CELL_SIZE + 2;
+const heigthDefault = ROWS * CELL_SIZE + 2;
+
 export function Grid() {
   const dispatch = useAppDispatch();
   const { cells, selectedCells, isSelecting } = useAppSelector((state: RootState) => state.grid);
 
+  const [widthElement, setWidthElement] = useState(widthDefault);
   const [startPos, setStartPos] = useState<{ x: number; y: number } | null>(null);
   const [scale, setScale] = useState(1);
 
-  const widthElement = COLS * CELL_SIZE + 2;
-  const heigthElement = ROWS * CELL_SIZE + 2;
 
   const handleMouseDown = (x: number, y: number) => {
     setStartPos({ x, y });
@@ -60,6 +62,12 @@ export function Grid() {
     setScale(scale - 0.1);
   };
 
+  useEffect(() => {
+    if (widthElement > document.documentElement.getBoundingClientRect().width) {
+      setWidthElement(document.documentElement.getBoundingClientRect().width - 50);
+    }
+  }, [widthElement]);
+
   return (
     <div className="relative">
       {/* Контролы зума */}
@@ -77,7 +85,7 @@ export function Grid() {
         <div
           className="w-8 flex flex-col items-center absolute top-3 left-0"
           style={{
-            height: heigthElement,
+            height: heigthDefault,
           }}
         >
           {/* Ось Y (цифры) */}
@@ -95,8 +103,8 @@ export function Grid() {
         </div>
 
         <svg
-          width={widthElement}
-          height={heigthElement}
+          width={widthElement > window.innerWidth ? window.innerWidth : widthElement}
+          height={heigthDefault}
           onMouseUp={handleMouseUp}
           className="border overflow-auto"
         >
