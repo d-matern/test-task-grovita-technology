@@ -8,7 +8,7 @@ export function Grid() {
   const dispatch = useAppDispatch();
   const { cells, selectedCells, isSelecting } = useAppSelector((state: RootState) => state.grid);
 
-  const [startPos, setStartPos] = useState<{ x: number, y: number } | null>(null);
+  const [startPos, setStartPos] = useState<{ x: number; y: number } | null>(null);
   const [scale, setScale] = useState(1);
 
   const widthElement = COLS * CELL_SIZE + 2;
@@ -61,28 +61,32 @@ export function Grid() {
   };
 
   return (
-    <div className='relative'>
+    <div className="relative">
       {/* Контролы зума */}
-      <div className='mb-2.5 flex flex-row gap-3'>
-        <button onClick={handleZoomIn} disabled={scale >= 3.5}>Zoom In</button>
-        <button onClick={handleZoomOut} disabled={scale <= 1}>Zoom Out</button>
+      <div className="mb-2.5 flex flex-row gap-3">
+        <button onClick={handleZoomIn} disabled={scale >= 3.5}>
+          Zoom In
+        </button>
+        <button onClick={handleZoomOut} disabled={scale <= 1}>
+          Zoom Out
+        </button>
         {scale}
       </div>
 
-      <div className='pt-3 pl-8 pb-8 relative overflow-hidden'>
+      <div className="pt-3 pl-8 pb-8 relative overflow-hidden">
         <div
-          className='w-8 flex flex-col items-center absolute top-3 left-0'
+          className="w-8 flex flex-col items-center absolute top-3 left-0"
           style={{
-            height: heigthElement
+            height: heigthElement,
           }}
         >
           {/* Ось Y (цифры) */}
           {Array.from({ length: ROWS }).map((_, y) => (
             <span
               key={y}
-              className='absolute -translate-y-1/2'
+              className="absolute -translate-y-1/2"
               style={{
-                top: y * CELL_SIZE * scale
+                top: y * CELL_SIZE * scale,
               }}
             >
               {y + 1}
@@ -94,7 +98,7 @@ export function Grid() {
           width={widthElement}
           height={heigthElement}
           onMouseUp={handleMouseUp}
-          className='border overflow-auto'
+          className="border overflow-auto"
         >
           {cells.map((cell) => (
             <rect
@@ -115,18 +119,18 @@ export function Grid() {
         </svg>
 
         <div
-          className='h-8 flex flex-row items-center absolute left-8 bottom-0'
+          className="h-8 flex flex-row items-center absolute left-8 bottom-0"
           style={{
-            width: widthElement
+            width: widthElement,
           }}
         >
           {/* Ось X (Буквы) */}
           {Array.from({ length: COLS }).map((_, x) => (
             <span
               key={x}
-              className='absolute -translate-x-1/2'
+              className="absolute -translate-x-1/2"
               style={{
-                left: x * CELL_SIZE * scale
+                left: x * CELL_SIZE * scale,
               }}
             >
               {String.fromCharCode(65 + x)}

@@ -27,10 +27,10 @@ const gridSlice = createSlice({
   initialState,
   reducers: {
     selectCell: (state, action: PayloadAction<string>) => {
-      const cellId = state.selectedCells.find(c => c === action.payload);
+      const cellId = state.selectedCells.find((c) => c === action.payload);
 
       if (cellId) {
-        state.selectedCells = state.selectedCells.filter(cId => cId !== cellId);
+        state.selectedCells = state.selectedCells.filter((cId) => cId !== cellId);
         return;
       }
 
@@ -58,5 +58,6 @@ const gridSlice = createSlice({
   },
 });
 
-export const { selectCell, setSelectedCells, clearSelection, setSelecting, applyColor, setColor } = gridSlice.actions;
+export const { selectCell, setSelectedCells, clearSelection, setSelecting, applyColor, setColor } =
+  gridSlice.actions;
 export default gridSlice.reducer;
