@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../../shared/hooks/reduxHooks
 import { selectCell, setSelectedCells, setSelecting } from '../model/gridSlice';
 import { RootState } from '../../../shared/types/store';
 import { CELL_SIZE, COLS, ROWS } from '../config/constants';
+import { IconMagnifyMinusOutline, IconMagnifyPlusOutline } from '../../../shared/ui';
 
 const widthDefault = COLS * CELL_SIZE + 2;
 const heigthDefault = ROWS * CELL_SIZE + 2;
@@ -95,14 +96,16 @@ export function Grid() {
   return (
     <div className="relative">
       {/* Контролы зума */}
-      <div className="mb-2.5 flex flex-row gap-3">
-        <button onClick={handleZoomIn} disabled={scale >= 3.5}>
-          Zoom In
+      <div className="mb-2.5 flex flex-row justify-end gap-3">
+        <button className='cursor-pointer transition-colors hover:text-blue-400' onClick={handleZoomIn} disabled={scale >= 3.5}>
+          <IconMagnifyPlusOutline />
         </button>
-        <button onClick={handleZoomOut} disabled={scale <= 1}>
-          Zoom Out
+
+        {scale.toFixed(1)}
+
+        <button className='cursor-pointer transition-colors hover:text-blue-400' onClick={handleZoomOut} disabled={scale <= 1}>
+          <IconMagnifyMinusOutline />
         </button>
-        {scale}
       </div>
 
       <div className="pt-3 pl-8 pb-8 relative overflow-hidden">
