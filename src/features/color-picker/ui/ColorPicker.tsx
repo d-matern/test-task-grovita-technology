@@ -15,6 +15,8 @@ export function ColorPicker() {
         onChange={(e) => dispatch(setColor(e.target.value))}
       />
       <button
+        name="apply-color"
+        type="button"
         className="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer transition-colors hover:bg-blue-400"
         onClick={() => dispatch(applyColor())}
       >

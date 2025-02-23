@@ -89,8 +89,8 @@ export function Grid() {
 
     return () => {
       gridContainer?.removeEventListener('scroll', watchScrollGridContainer);
-    }
-  }, [gridContainerRef])
+    };
+  }, [gridContainerRef]);
 
   return (
     <div className="relative">
@@ -129,10 +129,10 @@ export function Grid() {
 
         <div
           ref={gridContainerRef}
-          className='overflow-auto'
+          className="overflow-auto"
           style={{
             width: widthElement,
-            height: heigthDefault
+            height: heigthDefault,
           }}
         >
           <svg
@@ -143,11 +143,12 @@ export function Grid() {
             {cells.map((cell) => (
               <rect
                 key={cell.id}
+                data-cell-id={cell.id}
                 x={cell.x * scale + 2}
                 y={cell.y * scale + 2}
                 width={CELL_SIZE * scale}
                 height={CELL_SIZE * scale}
-                fill={selectedCells.includes(cell.id) ? 'rgba(0, 0, 255, 0.3)' : cell.color}
+                fill={selectedCells.includes(cell.id) ? '#0000ff4d' : cell.color}
                 stroke="black"
                 strokeWidth="1"
                 onClick={() => dispatch(selectCell(cell.id))}

@@ -9,7 +9,7 @@ export function AppLayout() {
           <NavLink to="/result">Результат</NavLink>
         </nav>
       </header>
-      <main className='w-full px-4 flex flex-col items-center'>
+      <main className="w-full px-4 flex flex-col items-center">
         <Outlet />
       </main>
     </>
