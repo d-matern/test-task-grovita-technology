@@ -153,8 +153,6 @@ export function Grid() {
                 onClick={() => dispatch(selectCell(cell.id))}
                 onMouseDown={() => handleMouseDown(cell.x, cell.y)}
                 onMouseMove={() => handleMouseMove(cell.x, cell.y)}
-                onTouchStart={() => handleMouseDown(cell.x, cell.y)}
-                onTouchMove={() => handleMouseMove(cell.x, cell.y)}
                 className="cursor-pointer"
               />
             ))}
