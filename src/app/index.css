@@ -13,3 +13,11 @@ a:hover {
   text-decoration-thickness: 1px;
   text-decoration-style: dashed;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: "none"
+}

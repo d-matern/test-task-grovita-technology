@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks/reduxHooks';
 import { selectCell, setSelectedCells, setSelecting } from '../model/gridSlice';
 import { RootState } from '../../../shared/types/store';
@@ -15,6 +15,9 @@ export function Grid() {
   const [startPos, setStartPos] = useState<{ x: number; y: number } | null>(null);
   const [scale, setScale] = useState(1);
 
+  const gridContainerRef = useRef<HTMLDivElement | null>(null);
+  const axisYRef = useRef<HTMLDivElement | null>(null);
+  const axisXRef = useRef<HTMLDivElement | null>(null);
 
   const handleMouseDown = (x: number, y: number) => {
     setStartPos({ x, y });
@@ -62,11 +65,32 @@ export function Grid() {
     setScale(scale - 0.1);
   };
 
+  const watchScrollGridContainer = (e: Event) => {
+    const target = e.target as HTMLDivElement;
+    if (axisYRef.current) {
+      axisYRef.current.scrollTop = target.scrollTop;
+    }
+    if (axisXRef.current) {
+      axisXRef.current.scrollLeft = target.scrollLeft;
+    }
+  };
+
   useEffect(() => {
     if (widthElement > document.documentElement.getBoundingClientRect().width) {
       setWidthElement(document.documentElement.getBoundingClientRect().width - 50);
     }
   }, [widthElement]);
+
+  useEffect(() => {
+    const gridContainer = gridContainerRef.current;
+    if (gridContainer) {
+      gridContainer.addEventListener('scroll', watchScrollGridContainer);
+    }
+
+    return () => {
+      gridContainer?.removeEventListener('scroll', watchScrollGridContainer);
+    }
+  }, [gridContainerRef])
 
   return (
     <div className="relative">
@@ -82,17 +106,18 @@ export function Grid() {
       </div>
 
       <div className="pt-3 pl-8 pb-8 relative overflow-hidden">
+        {/* Ось Y (цифры) */}
         <div
-          className="w-8 flex flex-col items-center absolute top-3 left-0"
+          ref={axisYRef}
+          className="w-8 flex flex-col items-center absolute top-0 left-0 overflow-y-auto no-scrollbar"
           style={{
             height: heigthDefault,
           }}
         >
-          {/* Ось Y (цифры) */}
           {Array.from({ length: ROWS }).map((_, y) => (
             <span
               key={y}
-              className="absolute -translate-y-1/2"
+              className="absolute"
               style={{
                 top: y * CELL_SIZE * scale,
               }}
@@ -102,41 +127,50 @@ export function Grid() {
           ))}
         </div>
 
-        <svg
-          width={widthElement > window.innerWidth ? window.innerWidth : widthElement}
-          height={heigthDefault}
-          onMouseUp={handleMouseUp}
-          className="border overflow-auto"
-        >
-          {cells.map((cell) => (
-            <rect
-              key={cell.id}
-              x={cell.x * scale}
-              y={cell.y * scale}
-              width={CELL_SIZE * scale}
-              height={CELL_SIZE * scale}
-              fill={selectedCells.includes(cell.id) ? 'rgba(0, 0, 255, 0.3)' : cell.color}
-              stroke="black"
-              strokeWidth="1"
-              onClick={() => dispatch(selectCell(cell.id))}
-              onMouseDown={() => handleMouseDown(cell.x, cell.y)}
-              onMouseMove={() => handleMouseMove(cell.x, cell.y)}
-              className="cursor-pointer"
-            />
-          ))}
-        </svg>
-
         <div
-          className="h-8 flex flex-row items-center absolute left-8 bottom-0"
+          ref={gridContainerRef}
+          className='overflow-auto'
+          style={{
+            width: widthElement,
+            height: heigthDefault
+          }}
+        >
+          <svg
+            width={widthElement * scale}
+            height={heigthDefault * scale}
+            onMouseUp={handleMouseUp}
+          >
+            {cells.map((cell) => (
+              <rect
+                key={cell.id}
+                x={cell.x * scale + 2}
+                y={cell.y * scale + 2}
+                width={CELL_SIZE * scale}
+                height={CELL_SIZE * scale}
+                fill={selectedCells.includes(cell.id) ? 'rgba(0, 0, 255, 0.3)' : cell.color}
+                stroke="black"
+                strokeWidth="1"
+                onClick={() => dispatch(selectCell(cell.id))}
+                onMouseDown={() => handleMouseDown(cell.x, cell.y)}
+                onMouseMove={() => handleMouseMove(cell.x, cell.y)}
+                className="cursor-pointer"
+              />
+            ))}
+          </svg>
+        </div>
+
+        {/* Ось X (Буквы) */}
+        <div
+          ref={axisXRef}
+          className="h-8 flex flex-row items-center absolute left-7 bottom-0 overflow-y-auto no-scrollbar"
           style={{
             width: widthElement,
           }}
         >
-          {/* Ось X (Буквы) */}
           {Array.from({ length: COLS }).map((_, x) => (
             <span
               key={x}
-              className="absolute -translate-x-1/2"
+              className="absolute"
               style={{
                 left: x * CELL_SIZE * scale,
               }}
