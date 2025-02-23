@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../shared/hooks/reduxHooks';
-import { selectCell, setSelecting } from '../model/gridSlice';
+import { selectCell, setSelectedCells, setSelecting } from '../model/gridSlice';
 import { RootState } from '../../../shared/types/store';
 import { CELL_SIZE, COLS, ROWS } from '../config/constants';
 
@@ -22,11 +22,18 @@ export function Grid() {
       const minY = Math.min(startPos.y, y);
       const maxY = Math.max(startPos.y, y);
 
+      const newSelectedCells = new Set(selectedCells);
+
       cells.forEach((cell) => {
-        if (cell.x >= minX && cell.x < maxX + CELL_SIZE && cell.y >= minY && cell.y < maxY + CELL_SIZE) {
-          dispatch(selectCell(cell.id));
+        const insideX = cell.x + CELL_SIZE > minX && cell.x < maxX + CELL_SIZE;
+        const insideY = cell.y + CELL_SIZE > minY && cell.y < maxY + CELL_SIZE;
+
+        if (insideX && insideY) {
+          newSelectedCells.add(cell.id);
         }
-      })
+      });
+
+      dispatch(setSelectedCells(Array.from(newSelectedCells)));
     }
   };
 
