@@ -9,6 +9,10 @@ export function Grid() {
   const { cells, selectedCells, isSelecting } = useAppSelector((state: RootState) => state.grid);
 
   const [startPos, setStartPos] = useState<{ x: number, y: number } | null>(null);
+  const [scale, setScale] = useState(1);
+
+  const widthElement = COLS * CELL_SIZE + 2;
+  const heigthElement = ROWS * CELL_SIZE + 2;
 
   const handleMouseDown = (x: number, y: number) => {
     setStartPos({ x, y });
@@ -41,53 +45,95 @@ export function Grid() {
     dispatch(setSelecting(false));
   };
 
+  // Масштабирование сетки
+  const handleZoomIn = () => {
+    if (scale >= 3.5) {
+      return;
+    }
+    setScale(scale + 0.1);
+  };
+
+  const handleZoomOut = () => {
+    if (scale <= 1) {
+      return;
+    }
+    setScale(scale - 0.1);
+  };
+
   return (
-    <svg width={COLS * CELL_SIZE + 50} height={ROWS * CELL_SIZE + 50} onMouseUp={handleMouseUp}>
-      {/* Ось Y (цифры) */}
-      {Array.from({ length: ROWS }).map((_, y) => (
-        <text
-          key={y}
-          x={COLS}
-          y={y * CELL_SIZE + CELL_SIZE / 2.5}
-          textAnchor="middle"
-          fontSize="14"
-          fontWeight="bold"
-        >
-          {y + 1}
-        </text>
-      ))}
+    <div className='relative'>
+      {/* Контролы зума */}
+      <div className='mb-2.5 flex flex-row gap-3'>
+        <button onClick={handleZoomIn} disabled={scale >= 3.5}>Zoom In</button>
+        <button onClick={handleZoomOut} disabled={scale <= 1}>Zoom Out</button>
+        {scale}
+      </div>
 
-      {/* Ось X (Буквы) */}
-      {Array.from({ length: COLS }).map((_, x) => (
-        <text
-          key={x}
-          x={x * CELL_SIZE + CELL_SIZE / 1.5}
-          y={ROWS * CELL_SIZE + 25}
-          textAnchor="middle"
-          fontSize="14"
-          fontWeight="bold"
+      <div className='pt-3 pl-8 pb-8 relative overflow-hidden'>
+        <div
+          className='w-8 flex flex-col items-center absolute top-3 left-0'
+          style={{
+            height: heigthElement
+          }}
         >
-          {String.fromCharCode(65 + x)}
-        </text>
-      ))}
+          {/* Ось Y (цифры) */}
+          {Array.from({ length: ROWS }).map((_, y) => (
+            <span
+              key={y}
+              className='absolute -translate-y-1/2'
+              style={{
+                top: y * CELL_SIZE * scale
+              }}
+            >
+              {y + 1}
+            </span>
+          ))}
+        </div>
 
-      {/* Клетки */}
-      {cells.map((cell) => (
-        <rect
-          key={cell.id}
-          x={cell.x + 30}
-          y={cell.y + 10}
-          width={CELL_SIZE}
-          height={CELL_SIZE}
-          fill={selectedCells.includes(cell.id) ? 'rgba(0, 0, 255, 0.3)' : cell.color}
-          stroke="black"
-          strokeWidth="1"
-          onClick={() => dispatch(selectCell(cell.id))}
-          onMouseDown={() => handleMouseDown(cell.x, cell.y)}
-          onMouseMove={() => handleMouseMove(cell.x, cell.y)}
-          className="cursor-pointer"
-        />
-      ))}
-    </svg>
+        <svg
+          width={widthElement}
+          height={heigthElement}
+          onMouseUp={handleMouseUp}
+          className='border overflow-auto'
+        >
+          {cells.map((cell) => (
+            <rect
+              key={cell.id}
+              x={cell.x * scale}
+              y={cell.y * scale}
+              width={CELL_SIZE * scale}
+              height={CELL_SIZE * scale}
+              fill={selectedCells.includes(cell.id) ? 'rgba(0, 0, 255, 0.3)' : cell.color}
+              stroke="black"
+              strokeWidth="1"
+              onClick={() => dispatch(selectCell(cell.id))}
+              onMouseDown={() => handleMouseDown(cell.x, cell.y)}
+              onMouseMove={() => handleMouseMove(cell.x, cell.y)}
+              className="cursor-pointer"
+            />
+          ))}
+        </svg>
+
+        <div
+          className='h-8 flex flex-row items-center absolute left-8 bottom-0'
+          style={{
+            width: widthElement
+          }}
+        >
+          {/* Ось X (Буквы) */}
+          {Array.from({ length: COLS }).map((_, x) => (
+            <span
+              key={x}
+              className='absolute -translate-x-1/2'
+              style={{
+                left: x * CELL_SIZE * scale
+              }}
+            >
+              {String.fromCharCode(65 + x)}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
